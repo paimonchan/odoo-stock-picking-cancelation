@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models
-
+from odoo.execeptions import UserError
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    def action_cancel(self):
+    def action_cancel_doned_picking(self):
         def _cancel_stock_move(record):
             moves = record.move_lines
             move_lines = moves.mapped('move_line_ids')
@@ -19,8 +19,25 @@ class StockPicking(models.Model):
                 ('stock_move_id', 'in', moves.ids)
             ])
             account_moves.button_cancel()
+        
+        def _check_adjustment(record):
+            inv_model = self.env['stock.quant']
+            for move in record.move_lines:
+                exist_adjustment = inv_model.search([
+                    ('state', '=', 'done'),
+                    ('date', '>', move.date),
+                    ('product_id', '=', move.product_id.id),
+                    '|', 
+                        ('location_id.usage', '=', 'inventory'),
+                        ('location_dest_id.usage', '=', 'inventory'),
+                ], order='date desc', limit=1)
+
+                if not exist_adjustment:
+                    continue
+                raise UserError('Already contain adjustment above date order!')
 
         records = self.filtered(lambda e: e.state != 'cancel')
         for record in records:
+            _check_adjustment(record)
             _cancel_stock_move(record)
             _cancel_account_move(record)
