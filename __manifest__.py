@@ -4,11 +4,11 @@
     "summary": "Force cancel doned stock picking",
     "version": "15.0.0",
     "category": "Warehouse Management",
-    "license": "AGPL-3",
-    "author": "Nazzun",
-    "website": "https://github.com/OCA/stock-logistics-warehouse",
+    "author": "Nazzun Hanif A.",
+    "website": "https://github.com/paimonchan/odoo-stock-picking-cancelation",
     "depends": ["stock_account", "stock"],
     "data": [
+        'views/stock_picking.xml',
     ],
     "installable": True,
 }
