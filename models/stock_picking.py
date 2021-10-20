@@ -27,9 +27,9 @@ class StockPicking(models.Model):
             if not _should_check_adjustment(record):
                 return
 
-            inv_model = self.env['stock.quant']
+            move_model = self.env['stock.move']
             for move in record.move_lines:
-                exist_adjustment = inv_model.search([
+                exist_adjustment = move_model.search([
                     ('state', '=', 'done'),
                     ('date', '>', move.date),
                     ('product_id', '=', move.product_id.id),
