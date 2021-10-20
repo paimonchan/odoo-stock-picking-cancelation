@@ -8,6 +8,7 @@
     "website": "https://github.com/paimonchan/odoo-stock-picking-cancelation",
     "depends": ["stock_account", "stock"],
     "data": [
+        'datas/ir_config_parameter',
         'views/stock_picking.xml',
     ],
     "installable": True,

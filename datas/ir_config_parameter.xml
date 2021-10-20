@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_config_parameter_should_check_adjustment" model="ir.config_parameter">
+            <field name="key">stock_picking_cacelation_should_check_adjustment</field>
+            <field name="value">1</field>
+        </record>
+    </data>
+</odoo>
