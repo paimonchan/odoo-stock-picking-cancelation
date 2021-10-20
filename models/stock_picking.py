@@ -3,6 +3,8 @@
 from odoo import models
 from odoo.execeptions import UserError
 
+KEY_PARAM_SHOULD_CHECK_ADJUSTMENT = 'stock_picking_cacelation_should_check_adjustment'
+
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
@@ -21,6 +23,10 @@ class StockPicking(models.Model):
             account_moves.button_cancel()
         
         def _check_adjustment(record):
+            # by default always check existing adjustment
+            if not _should_check_adjustment(record):
+                return
+
             inv_model = self.env['stock.quant']
             for move in record.move_lines:
                 exist_adjustment = inv_model.search([
@@ -34,7 +40,12 @@ class StockPicking(models.Model):
 
                 if not exist_adjustment:
                     continue
-                raise UserError('Already contain adjustment above date order!')
+                raise UserError('Already contain adjustment above date transfer!.')
+        
+        def _should_check_adjustment(record):
+            params = record.env['ir.config_parameter'].sudo()
+            should_check = int(params.get(KEY_PARAM_SHOULD_CHECK_ADJUSTMENT, 0)) == 1
+            return should_check
 
         records = self.filtered(lambda e: e.state != 'cancel')
         for record in records:
